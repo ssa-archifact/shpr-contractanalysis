@@ -57,18 +57,18 @@ def apply_branding(background: str, logo: str | None = None):
             .stApp {{
                 background: url("data:image/jpg;base64,{b64}") no-repeat center center fixed;
                 background-size: cover;
+                color: #f0f0f0 !important; /* default text brighter */
             }}
-            /* Optional: subtle overlay to keep text readable */
-            .stApp::before {{
-                content: "";
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.25);
-                pointer-events: none;
-                z-index: 0;
+
+            h1, h2, h3, h4, h5, h6 {{
+                color: #ffffff !important;
             }}
-            /* Make main container sit above overlay */
-            .block-container {{ position: relative; z-index: 1; }}
+
+            /* Make main container sit above background */
+            .block-container {{
+                position: relative;
+                z-index: 1;
+            }}
             </style>
             """,
             unsafe_allow_html=True,
@@ -84,10 +84,12 @@ def apply_branding(background: str, logo: str | None = None):
             # Fallback: put it in the sidebar
             st.sidebar.image(logo, use_container_width=True)
 
+
 # ---- Use it ----
 BACKGROUND_URL = "shpr-background.jpg"
 LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
 apply_branding(BACKGROUND_URL, LOGO_URL)
+
 # ------------------ AUTH (demo) ------------------
 # Simple session-gated login for demo purposes. Replace with proper auth for production.
 DEMO_USERS = {

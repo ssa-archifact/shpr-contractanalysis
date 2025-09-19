@@ -170,7 +170,7 @@ def ensure_authenticated():
             st.rerun()
 
     if not st.session_state.authenticated:
-        render_brand_header(APP_TITLE, LOGO_URL, logo_height_px=42) 
+        #render_brand_header(APP_TITLE, LOGO_URL, logo_height_px=42) 
         login_form()
         st.stop()
 

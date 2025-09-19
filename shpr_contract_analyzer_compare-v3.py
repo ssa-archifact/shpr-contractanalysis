@@ -64,6 +64,7 @@ def render_brand_header(title: str, logo_path_or_url: str | None = None, logo_he
       .brand-header {{
         display: flex; align-items: center; gap: 12px;
         margin: 0 0 1rem 0;
+        margin-top:100px;
       }}
       .brand-logo {{
         height: {logo_height_px}px; width: auto; display: block;
@@ -124,7 +125,7 @@ def apply_branding(background: str, logo: str | None = None):
 #apply_branding(BACKGROUND_URL, LOGO_URL)
 
 # ------------------ App setup ------------------
-st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
+#st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
 
 LOGO_URL = st.secrets.get("APP_LOGO_URL") or os.getenv("APP_LOGO_URL") or "shpr-placeholder.png"
 APP_TITLE = "Shopper AI Contract Analyzer & Vergelijker"

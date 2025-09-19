@@ -35,9 +35,9 @@ except Exception as e:
 # ------------------ App setup ------------------
 st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
 # --- Shopper branding (background + logo) ---
-BACKGROUND_URL = "https://shopper.archifact-demo.nl/images/shpr-login.jpg"
+BACKGROUND_URL = "shpr-background.jpg"
 # You can override this via Streamlit Secrets or an env var named APP_LOGO_URL
-LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "https://shopper.archifact-demo.nl/images/shpr-logo.png"))
+LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
 
 # Global background with a subtle dark overlay; glassy content card
 st.markdown(

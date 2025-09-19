@@ -243,7 +243,7 @@ Antwoord alleen met JSON.
 )
 
 # ---------- Groq calls ----------
-def _groq_client() -> Groq:
+def _groq_client() -> "Groq":
     # Protect your key: set it in Streamlit Secrets on Community Cloud
     # (App -> Settings -> Secrets): GROQ_API_KEY = "xxx"
     # Local dev can use environment variable as fallback.

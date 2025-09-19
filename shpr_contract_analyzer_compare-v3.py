@@ -33,8 +33,7 @@ except Exception as e:
              "Make sure requirements.txt has `groq>=0.11.0` and there’s no local file/folder named `groq`.")
     st.stop()
 
-# ------------------ App setup ------------------
-st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
+
 # --- Shopper branding (background + logo) ---
 def _read_bytes(path_or_url: str) -> bytes:
     # Local file
@@ -45,7 +44,41 @@ def _read_bytes(path_or_url: str) -> bytes:
     import urllib.request
     with urllib.request.urlopen(path_or_url) as r:
         return r.read()
+def _img_src(path_or_url: str) -> str:
+    """Return a data: URL for local files, or pass-through for http(s) URLs."""
+    p = Path(path_or_url)
+    if p.exists():
+        ext = (p.suffix.lower().lstrip(".") or "png")
+        b64 = base64.b64encode(p.read_bytes()).decode()
+        return f"data:image/{ext};base64,{b64}"
+    return path_or_url  # assume URL
 
+def render_brand_header(title: str, logo_path_or_url: str | None = None, logo_height_px: int = 40):
+    logo_html = ""
+    if logo_path_or_url:
+        src = _img_src(logo_path_or_url)
+        logo_html = f'<img src="{src}" alt="logo" class="brand-logo" />'
+
+    st.markdown(f"""
+    <style>
+      .brand-header {{
+        display: flex; align-items: center; gap: 12px;
+        margin: 0 0 1rem 0;
+      }}
+      .brand-logo {{
+        height: {logo_height_px}px; width: auto; display: block;
+      }}
+      .brand-title {{
+        margin: 0; line-height: 1.2; font-size: 1.6rem; font-weight: 700;
+      }}
+      /* Optional: tighten top padding a bit */
+      .block-container {{ padding-top: 0.75rem; }}
+    </style>
+    <div class="brand-header">
+      {logo_html}
+      <h1 class="brand-title">{title}</h1>
+    </div>
+    """, unsafe_allow_html=True)
 def apply_branding(background: str, logo: str | None = None):
     # Background (supports local file or URL)
     try:
@@ -86,9 +119,18 @@ def apply_branding(background: str, logo: str | None = None):
 
 
 # ---- Use it ----
-BACKGROUND_URL = "shpr-background.jpg"
-LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
-apply_branding(BACKGROUND_URL, LOGO_URL)
+#BACKGROUND_URL = "shpr-background.jpg"
+#LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
+#apply_branding(BACKGROUND_URL, LOGO_URL)
+
+# ------------------ App setup ------------------
+st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
+
+LOGO_URL = st.secrets.get("APP_LOGO_URL") or os.getenv("APP_LOGO_URL") or "shpr-logo.png"
+APP_TITLE = "Shopper AI Contract Analyzer & Vergelijker"
+
+# Render the branded header on every page
+render_brand_header(APP_TITLE, LOGO_URL, logo_height_px=42)
 
 # ------------------ AUTH (demo) ------------------
 # Simple session-gated login for demo purposes. Replace with proper auth for production.
@@ -127,6 +169,7 @@ def ensure_authenticated():
             st.rerun()
 
     if not st.session_state.authenticated:
+        render_brand_header(APP_TITLE, LOGO_URL, logo_height_px=42) 
         login_form()
         st.stop()
 

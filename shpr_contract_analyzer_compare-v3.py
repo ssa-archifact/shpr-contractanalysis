@@ -34,6 +34,42 @@ except Exception as e:
 
 # ------------------ App setup ------------------
 st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
+# --- Shopper branding (background + logo) ---
+BACKGROUND_URL = "https://shopper.archifact-demo.nl/images/shpr-login.jpg"
+# You can override this via Streamlit Secrets or an env var named APP_LOGO_URL
+LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "https://shopper.archifact-demo.nl/images/shpr-logo.png"))
+
+# Global background with a subtle dark overlay; glassy content card
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background: linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30))),
+                    url('{BACKGROUND_URL}') no-repeat center center fixed;
+        background-size: cover;
+    }}
+    /* Main content container */
+    .block-container {{
+        background: rgba(255,255,255,0.88);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }}
+    /* Sidebar glass effect (optional) */
+    section[data-testid="stSidebar"] > div {{
+        background: rgba(255,255,255,0.80);
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Sidebar logo
+with st.sidebar:
+    try:
+        st.image(LOGO_URL, use_column_width=True)
+    except Exception:
+        pass
 
 # ------------------ AUTH (demo) ------------------
 # Simple session-gated login for demo purposes. Replace with proper auth for production.

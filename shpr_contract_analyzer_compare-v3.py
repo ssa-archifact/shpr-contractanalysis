@@ -269,7 +269,7 @@ def get_groq_client():
     return client
 
 def call_groq_analyze(text: str, model: str) -> Dict[str, Any]:
-    client = _groq_client()
+    client = get_groq_client()
     prompt = (PROMPT_ANALYZE_NL if NL else PROMPT_ANALYZE_EN) + text
     completion = client.chat.completions.create(
         model=model,
@@ -284,7 +284,7 @@ def call_groq_analyze(text: str, model: str) -> Dict[str, Any]:
     return json.loads(completion.choices[0].message.content)
 
 def call_groq_compare(text_a: str, text_b: str, model: str) -> Dict[str, Any]:
-    client = _groq_client()
+    client = get_groq_client()
     prompt = (PROMPT_COMPARE_NL if NL else PROMPT_COMPARE_EN) + "\n\nTEXT A (old/oud):\n" + text_a + "\n\nTEXT B (new/nieuw):\n" + text_b
     completion = client.chat.completions.create(
         model=model,

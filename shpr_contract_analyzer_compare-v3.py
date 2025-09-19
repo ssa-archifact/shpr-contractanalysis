@@ -8,7 +8,8 @@ import io
 import json
 from typing import List, Dict, Any
 from datetime import datetime, timedelta
-
+import base64
+from pathlib import Path
 import streamlit as st
 
 # Optional text extractors (no table parsing; LLM-only analysis)
@@ -35,42 +36,58 @@ except Exception as e:
 # ------------------ App setup ------------------
 st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
 # --- Shopper branding (background + logo) ---
-BACKGROUND_URL = "shpr-background.jpg"
-# You can override this via Streamlit Secrets or an env var named APP_LOGO_URL
-LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
+def _read_bytes(path_or_url: str) -> bytes:
+    # Local file
+    p = Path(path_or_url)
+    if p.exists():
+        return p.read_bytes()
+    # Remote URL
+    import urllib.request
+    with urllib.request.urlopen(path_or_url) as r:
+        return r.read()
 
-# Global background with a subtle dark overlay; glassy content card
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background: linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30))),
-                    url('{BACKGROUND_URL}') no-repeat center center fixed;
-        background-size: cover;
-    }}
-    /* Main content container */
-    .block-container {{
-        background: rgba(255,255,255,0.88);
-        border-radius: 16px;
-        padding: 1rem 2rem;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    }}
-    /* Sidebar glass effect (optional) */
-    section[data-testid="stSidebar"] > div {{
-        background: rgba(255,255,255,0.80);
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Sidebar logo
-with st.sidebar:
+def apply_branding(background: str, logo: str | None = None):
+    # Background (supports local file or URL)
     try:
-        st.image(LOGO_URL, use_column_width=True)
-    except Exception:
-        pass
+        bg_bytes = _read_bytes(background)
+        b64 = base64.b64encode(bg_bytes).decode()
+        st.markdown(
+            f"""
+            <style>
+            .stApp {{
+                background: url("data:image/jpg;base64,{b64}") no-repeat center center fixed;
+                background-size: cover;
+            }}
+            /* Optional: subtle overlay to keep text readable */
+            .stApp::before {{
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.25);
+                pointer-events: none;
+                z-index: 0;
+            }}
+            /* Make main container sit above overlay */
+            .block-container {{ position: relative; z-index: 1; }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+    except Exception as e:
+        st.info(f"Background not applied ({e}).")
 
+    # Logo (Streamlit 1.31+)
+    if logo:
+        try:
+            st.logo(logo)  # accepts local path or URL
+        except Exception:
+            # Fallback: put it in the sidebar
+            st.sidebar.image(logo, use_container_width=True)
+
+# ---- Use it ----
+BACKGROUND_URL = "shpr-background.jpg"
+LOGO_URL = st.secrets.get("APP_LOGO_URL", os.getenv("APP_LOGO_URL", "shpr-logo.png"))
+apply_branding(BACKGROUND_URL, LOGO_URL)
 # ------------------ AUTH (demo) ------------------
 # Simple session-gated login for demo purposes. Replace with proper auth for production.
 DEMO_USERS = {

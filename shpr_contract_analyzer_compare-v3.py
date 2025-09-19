@@ -243,14 +243,30 @@ Antwoord alleen met JSON.
 )
 
 # ---------- Groq calls ----------
-def _groq_client() -> "Groq":
-    # Protect your key: set it in Streamlit Secrets on Community Cloud
-    # (App -> Settings -> Secrets): GROQ_API_KEY = "xxx"
-    # Local dev can use environment variable as fallback.
-    api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-    if not _GROQ_OK or not api_key:
-        raise RuntimeError("Groq client/API key not available. Set GROQ_API_KEY in app secrets.")
-    return Groq(api_key=api_key)
+def get_groq_client():
+    # Prefer Streamlit secrets on Cloud; fall back to env for local/dev
+    raw_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+    api_key = (raw_key or "").strip()
+    if not api_key:
+        st.error(
+            "GROQ_API_KEY missing. On Streamlit Cloud, set it in Settings → Secrets "
+            "(root-level: GROQ_API_KEY = \"...\"), or export it locally."
+        )
+        st.stop()
+
+    # Optional: validate basic shape to catch accidental paste errors
+    if not (api_key.startswith("gsk_") or api_key.startswith("sk_")):
+        st.warning("GROQ_API_KEY doesn't look like a typical Groq key (prefix). Double-check it.")
+
+    # Also mirror to env so downstream libs see it
+    os.environ["GROQ_API_KEY"] = api_key
+
+    try:
+        client = Groq(api_key=api_key)
+    except Exception as e:
+        st.error(f"Failed to initialize Groq client with provided key: {e}")
+        st.stop()
+    return client
 
 def call_groq_analyze(text: str, model: str) -> Dict[str, Any]:
     client = _groq_client()

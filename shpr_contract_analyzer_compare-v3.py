@@ -25,10 +25,12 @@ except Exception:
     _DOCX_OK = False
 
 try:
+    # Option A (preferred)
     from groq import Groq
-    _GROQ_OK = True
-except Exception:
-    _GROQ_OK = False
+except Exception as e:
+    st.error(f"Couldn’t import Groq: {e}. "
+             "Make sure requirements.txt has `groq>=0.11.0` and there’s no local file/folder named `groq`.")
+    st.stop()
 
 # ------------------ App setup ------------------
 st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")

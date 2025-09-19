@@ -188,7 +188,7 @@ def top_bar():
 # Gate the whole app below this line
 ensure_authenticated()
 
-st.title("📄 Shopper AI Contract Analyzer & Vergelijker")
+#st.title("📄 Shopper AI Contract Analyzer & Vergelijker")
 
 models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
 model_name = st.sidebar.selectbox("Groq model", models, index=0)

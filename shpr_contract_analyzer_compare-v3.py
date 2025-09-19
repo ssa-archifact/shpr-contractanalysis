@@ -126,7 +126,7 @@ def apply_branding(background: str, logo: str | None = None):
 # ------------------ App setup ------------------
 st.set_page_config(page_title="Shopper AI Contract Analyzer & Vergelijker", page_icon="📄", layout="wide")
 
-LOGO_URL = st.secrets.get("APP_LOGO_URL") or os.getenv("APP_LOGO_URL") or "shpr-logo.png"
+LOGO_URL = st.secrets.get("APP_LOGO_URL") or os.getenv("APP_LOGO_URL") or "shpr-placeholder.png"
 APP_TITLE = "Shopper AI Contract Analyzer & Vergelijker"
 
 # Render the branded header on every page

@@ -1,1 +1,7 @@
+streamlit>=1.37
 groq>=0.11.0
+pdfplumber>=0.11
+pdfminer.six>=20231228
+python-docx>=1.1
+# optional if you use them:
+pymupdf>=1.24
